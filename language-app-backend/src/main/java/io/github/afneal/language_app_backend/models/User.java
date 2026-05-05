@@ -1,10 +1,10 @@
 package io.github.afneal.language_app_backend.models;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 public class User {
@@ -17,6 +17,10 @@ public class User {
     private String username;
 
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Vocabulary> vocabulary;
 
 
     public User() { //default constructor needed by Hibernate to instantiate objects

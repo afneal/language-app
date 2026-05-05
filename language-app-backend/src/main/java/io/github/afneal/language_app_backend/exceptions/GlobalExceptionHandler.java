@@ -15,17 +15,31 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException exception) {
+    //business conflicts(409)
+    @ExceptionHandler(ItemAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleItemAlreadyExistsException(ItemAlreadyExistsException exception) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                List.of(exception.getMessage()),
+                "CONFLICT"
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    //missing data(404)
+    @ExceptionHandler(ResourceNotFoundException.class) //custom handler for missing users, words, missing flashcard etc
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
-                List.of("No data found for " + exception.getResourcePath()), //need to use List.of since ErrorResponse (DTO) has message as List
+                List.of(exception.getMessage()), //need to use List.of since ErrorResponse (DTO) has message as List
                 "NOT_FOUND"
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class) //handles validation errors like @size, password, empty username
+    //validation errors(400)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    //handles validation errors like @size, password, empty username
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         List<String> errors = exception.getBindingResult()
                 .getFieldErrors()
