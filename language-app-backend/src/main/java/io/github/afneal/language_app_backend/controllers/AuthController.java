@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     //better than using Autowired b/c can use final and prevent unauthorized changes and keeps "final" fields immutable.
-    //Autowired is legacy Spring
+    //Autowired is less preferred
 
     //should not inject repositories into controller, only service use
     private final UserProfileService userProfileService;
